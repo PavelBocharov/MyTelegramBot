@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -21,8 +22,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 public class SillienBot extends TelegramLongPollingBot {
 	public static Logger logger = Logger.getLogger( SillienBot.class );
 
-	public String BOT_USERNAME;
-	public String BOT_TOKEN;
+	private String BOT_USERNAME;
+	private String BOT_TOKEN;
 	private String SAVE_DIR;
 
 	public SillienBot() {
@@ -66,7 +67,7 @@ public class SillienBot extends TelegramLongPollingBot {
 	private void checkMessage(Message message) throws TelegramApiException, IOException {
 		Objects.nonNull( message );
 		if ( message.hasText() ) {
-			if ( message.getText().equals( "/help@" + BOT_USERNAME ) ) {
+			if ( message.getText().equalsIgnoreCase("/start") || message.getText().equalsIgnoreCase( "/help@" + BOT_USERNAME ) ) {
 				sendMsg( message, "Привет, я бот. Меня зовут Sillien.\n" +
 						"Да, мой создатель дебил и в свое время угорал по WarCraft и ебучим эльфам.\n" +
 						"Ты можешь пользоваться следующими функциями:\n" +
@@ -74,7 +75,7 @@ public class SillienBot extends TelegramLongPollingBot {
 						"/help@Sillien - помощь." );
 				return;
 			}
-			if ( message.getText().equals( "/foto" + "@" + BOT_USERNAME ) ) {
+			if ( message.getText().equalsIgnoreCase( "/foto" + "@" + BOT_USERNAME ) ) {
 				sendFoto( message );
 				return;
 			}
@@ -86,6 +87,15 @@ public class SillienBot extends TelegramLongPollingBot {
 		}
 		if (message.hasDocument()) {
 			downloadFileByFileID( message.getDocument().getFileId() );
+		}
+		if (message.getVoice() != null) {
+			downloadFileByFileID( message.getVoice().getFileId() );
+		}
+		if (message.getVideo() != null) {
+			downloadFileByFileID( message.getVideo().getFileId() );
+		}
+		if (message.getVideoNote() != null) {
+			downloadFileByFileID( message.getVideoNote().getFileId() );
 		}
 	}
 
@@ -132,15 +142,26 @@ public class SillienBot extends TelegramLongPollingBot {
 
 	private void sendFoto(Message message) {
 		SendPhoto photo = new SendPhoto();
-		photo.setPhoto( "https://disgustingmen.com/wp-content/uploads/2018/03/5-1.jpg" );
 		photo.setChatId( message.getChatId().toString() );
 		photo.setReplyToMessageId( message.getMessageId() );
-
+		photo.setNewPhoto( getRandomLocalPhoto() );
 		try {
 			sendPhoto( photo );
 		}
 		catch (TelegramApiException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private java.io.File getRandomLocalPhoto() {
+		List<java.io.File> photos = FileUtil.getFiles( SAVE_DIR + "/photos" );
+		int rand = randInt(0, photos.size() - 1);
+		return photos.get( rand );
+	}
+
+	private int randInt(int min, int max) {
+		Random rand = new Random();
+		int randomNum = rand.nextInt((max - min) + 1) + min;
+		return randomNum;
 	}
 }
