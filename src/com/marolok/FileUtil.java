@@ -1,13 +1,13 @@
-package com.marolok;
+package marolok;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-import org.apache.log4j.Logger;
 
 /**
  * Утилиты для работы с файлами и папками
