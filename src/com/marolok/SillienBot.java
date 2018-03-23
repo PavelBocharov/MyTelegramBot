@@ -1,11 +1,4 @@
-package com.marolok;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Random;
+package marolok;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -18,6 +11,13 @@ import org.telegram.telegrambots.api.objects.PhotoSize;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Random;
 
 public class SillienBot extends TelegramLongPollingBot {
 	public static Logger logger = Logger.getLogger( SillienBot.class );
