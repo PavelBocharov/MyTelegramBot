@@ -1,4 +1,4 @@
-package marolok;
+package marolok.utils;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author bocharov_pv
  */
 public class FileUtil {
-	private static Logger log = Logger.getLogger( FileUtil.class );;
+	private static Logger log = Logger.getLogger( FileUtil.class );
 
 	/**
 	 * Возвращает файл/папку
