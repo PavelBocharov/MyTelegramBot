@@ -2,12 +2,13 @@ package marolok.tel;
 
 import marolok.utils.TelegramUtils;
 import org.apache.log4j.Logger;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -32,6 +33,11 @@ public class Bot extends TelegramLongPollingBot {
 		catch (Exception ex) {
 			logger.error( ex.getMessage() );
 		}
+	}
+
+	@Override
+	public void onUpdatesReceived(List<Update> updates) {
+		updates.forEach(this::onUpdateReceived);
 	}
 
 	@Override
@@ -93,11 +99,11 @@ public class Bot extends TelegramLongPollingBot {
 					break;
 				}
 				case GIF: {
-					telegramUtils.sendDocument(message, "gif");
+					telegramUtils.sendDocument(message, "animations");
 					break;
 				}
 				case VIDEO: {
-					telegramUtils.sendDocument(message, "video");
+					telegramUtils.sendDocument(message, "videos");
 					break;
 				}
 			}

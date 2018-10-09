@@ -4,15 +4,15 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import marolok.tel.Bot;
 import org.apache.commons.io.FileUtils;
-import org.telegram.telegrambots.api.methods.GetFile;
-import org.telegram.telegrambots.api.methods.send.SendDocument;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.api.objects.File;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.MessageEntity;
-import org.telegram.telegrambots.api.objects.PhotoSize;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.File;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.MessageEntity;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,9 +35,9 @@ public class TelegramUtils {
     }
 
     public PhotoSize getBigPhoto(List<PhotoSize> photos) {
-        PhotoSize result = photos.get( 0 );
-        for ( int i = 1; i < photos.size(); i++ ) {
-            PhotoSize photo = photos.get( i );
+        PhotoSize result = photos.get(0);
+        for (int i = 1; i < photos.size(); i++) {
+            PhotoSize photo = photos.get(i);
             if (result.getFileSize() < photo.getFileSize()) {
                 result = photo;
             }
@@ -47,11 +47,12 @@ public class TelegramUtils {
 
     public void downloadFileByFileID(String fileId) throws TelegramApiException, IOException {
         GetFile getFile = new GetFile();
-        getFile.setFileId( fileId );
-        File file = bot.getFile( getFile );
+        getFile.setFileId(fileId);
+
+        File file = bot.execute(getFile);
 
         String urlString = file.getFileUrl( bot.getBotToken() );
-        String fileString = bot.getSavePath() + file.getFilePath();
+        String fileString = bot.getSavePath() + "/" + file.getFilePath();
 
         System.out.println(String.format( "Copy \nfrom url: %s\nto file:%s", urlString, fileString ));
 
@@ -61,18 +62,18 @@ public class TelegramUtils {
 
     public void sendFoto(Message message) throws TelegramApiException {
         SendPhoto photo = new SendPhoto();
-        photo.setChatId( message.getChatId().toString() );
-        photo.setReplyToMessageId( message.getMessageId() );
-        photo.setNewPhoto( getRandomLocalFile("photos") );
-        bot.sendPhoto( photo );
+        photo.setChatId(message.getChatId().toString());
+        photo.setReplyToMessageId(message.getMessageId());
+        photo.setPhoto(getRandomLocalFile("photos"));
+        bot.execute(photo);
     }
 
     public void sendDocument(Message message, String dir) throws TelegramApiException {
         SendDocument document = new SendDocument();
         document.setChatId(message.getChatId());
         document.setReplyToMessageId(message.getMessageId());
-        document.setNewDocument(getRandomLocalFile(dir));
-        bot.sendDocument(document);
+        document.setDocument(getRandomLocalFile(dir));
+        bot.execute(document);
     }
 
     private java.io.File getRandomLocalFile(String dir) {
@@ -88,8 +89,8 @@ public class TelegramUtils {
     }
 
     private String getFileNameByUrl(String url) {
-        String [] strs = url.split("/");
-        return strs.length > 0 ? strs[strs.length-1] : "null";
+        String[] strs = url.split("/");
+        return strs.length > 0 ? strs[strs.length - 1] : "null";
     }
 
     private String getPathByFileName(String fileName) {
@@ -117,12 +118,12 @@ public class TelegramUtils {
 
     public void sendMsg(Message message, String text) {
         SendMessage sendMes = new SendMessage();
-        sendMes.enableMarkdown( true );
-        sendMes.setChatId( message.getChatId().toString() );
-        sendMes.setReplyToMessageId( message.getMessageId() );
-        sendMes.setText( text );
+        sendMes.enableMarkdown(true);
+        sendMes.setChatId(message.getChatId().toString());
+        sendMes.setReplyToMessageId(message.getMessageId());
+        sendMes.setText(text);
         try {
-            bot.sendMessage( sendMes );
+            bot.execute(sendMes);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
